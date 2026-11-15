@@ -1,0 +1,5 @@
+@startuml
+' SUBSTITUA este arquivo pelo codigo PlantUML FINAL (o mesmo entregue ao professor).
+' O UML e o contrato do projeto: mudou o codigo, atualize este arquivo no mesmo commit.
+class Placeholder
+@enduml
