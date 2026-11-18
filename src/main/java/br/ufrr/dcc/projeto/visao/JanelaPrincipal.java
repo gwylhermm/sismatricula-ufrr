@@ -71,6 +71,8 @@ public class JanelaPrincipal extends javax.swing.JFrame {
         btnCadastrarTurma = new javax.swing.JButton();
         btnExcluirTurma = new javax.swing.JButton();
         btnListarTurmas = new javax.swing.JButton();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        tblTurmas = new javax.swing.JTable();
         jPanel6 = new javax.swing.JPanel();
         lblTituloMatriculas = new javax.swing.JLabel();
         lblAlunoMatricula = new javax.swing.JLabel();
@@ -99,8 +101,10 @@ public class JanelaPrincipal extends javax.swing.JFrame {
         btnCadastrarAluno.addActionListener(this::btnCadastrarAlunoActionPerformed);
 
         btnExcluirAluno.setText("Excluir");
+        btnExcluirAluno.addActionListener(this::btnExcluirAlunoActionPerformed);
 
         btnListarAlunos.setText("Listar");
+        btnListarAlunos.addActionListener(this::btnListarAlunosActionPerformed);
 
         tblAlunos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -202,6 +206,7 @@ public class JanelaPrincipal extends javax.swing.JFrame {
         btnCadastrarProfessor.addActionListener(this::btnCadastrarProfessorActionPerformed);
 
         btnExcluirProfessor.setText("Excluir");
+        btnExcluirProfessor.addActionListener(this::btnExcluirProfessorActionPerformed);
 
         btnListarProfessores.setText("Listar");
         btnListarProfessores.addActionListener(this::btnListarProfessoresActionPerformed);
@@ -275,7 +280,7 @@ public class JanelaPrincipal extends javax.swing.JFrame {
                     .addComponent(lblNomeProfessor)
                     .addComponent(txtNomeProfessor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblCpfProfessor)
                     .addComponent(txtCpfProfessor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(37, 37, 37)
@@ -305,6 +310,7 @@ public class JanelaPrincipal extends javax.swing.JFrame {
         btnCadastrarDisciplina.addActionListener(this::btnCadastrarDisciplinaActionPerformed);
 
         btnExcluirDisciplina.setText("Excluir");
+        btnExcluirDisciplina.addActionListener(this::btnExcluirDisciplinaActionPerformed);
 
         btnListarDisciplinas.setText("Listar");
         btnListarDisciplinas.addActionListener(this::btnListarDisciplinasActionPerformed);
@@ -379,7 +385,7 @@ public class JanelaPrincipal extends javax.swing.JFrame {
                     .addComponent(lblNomeDisciplina)
                     .addComponent(txtNomeDisciplina, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblCargaHoraria)
                     .addComponent(txtCargaHoraria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(37, 37, 37)
@@ -410,6 +416,34 @@ public class JanelaPrincipal extends javax.swing.JFrame {
         btnListarTurmas.setText("Listar");
         btnListarTurmas.addActionListener(this::btnListarTurmasActionPerformed);
 
+        tblTurmas.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
+            },
+            new String [] {
+                "ID", "Disciplina", "Quantidade de Vagas"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane5.setViewportView(tblTurmas);
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
@@ -437,8 +471,11 @@ public class JanelaPrincipal extends javax.swing.JFrame {
                                         .addComponent(btnExcluirTurma)
                                         .addGap(66, 66, 66)
                                         .addComponent(btnListarTurmas))
-                                    .addComponent(txtVagasTurma, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))))))
-                .addContainerGap(489, Short.MAX_VALUE))
+                                    .addComponent(txtVagasTurma, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGap(215, 215, 215)
+                        .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(433, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -458,7 +495,9 @@ public class JanelaPrincipal extends javax.swing.JFrame {
                     .addComponent(btnCadastrarTurma)
                     .addComponent(btnExcluirTurma)
                     .addComponent(btnListarTurmas))
-                .addContainerGap(462, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         jTabbedPane3.addTab("Turmas", jPanel5);
@@ -474,8 +513,10 @@ public class JanelaPrincipal extends javax.swing.JFrame {
         btnMatricular.addActionListener(this::btnMatricularActionPerformed);
 
         btnCancelarMatricula.setText("Cancelar Matrícula");
+        btnCancelarMatricula.addActionListener(this::btnCancelarMatriculaActionPerformed);
 
         btnSimularMatriculas.setText("Simular Matrículas");
+        btnSimularMatriculas.addActionListener(this::btnSimularMatriculasActionPerformed);
 
         lblResultadosSimulacao.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
         lblResultadosSimulacao.setText("RESULTADOS DA SIMULAÇÃO");
@@ -558,7 +599,27 @@ public class JanelaPrincipal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCadastrarAlunoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarAlunoActionPerformed
-        // TODO add your handling code here:
+        
+String nome = txtNome.getText().trim();
+String cpf = txtCpf.getText().trim();
+
+if (nome.isEmpty() || cpf.isEmpty()) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this,
+        "Preencha o nome e o CPF do aluno!",
+        "Campos obrigatórios",
+        javax.swing.JOptionPane.WARNING_MESSAGE
+    );
+    return;
+}
+
+javax.swing.JOptionPane.showMessageDialog(
+    this,
+    "Dados preenchidos! Cadastro aguardando integração com o serviço.",
+    "Integração pendente",
+    javax.swing.JOptionPane.INFORMATION_MESSAGE
+);
+
     }//GEN-LAST:event_btnCadastrarAlunoActionPerformed
 
     private void txtNomeProfessorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNomeProfessorActionPerformed
@@ -566,11 +627,39 @@ public class JanelaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_txtNomeProfessorActionPerformed
 
     private void btnCadastrarProfessorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarProfessorActionPerformed
-        // TODO add your handling code here:
+        
+String nome = txtNomeProfessor.getText().trim();
+String cpf = txtCpfProfessor.getText().trim();
+
+if (nome.isEmpty() || cpf.isEmpty()) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this,
+        "Preencha o nome e o CPF do professor!",
+        "Campos obrigatórios",
+        javax.swing.JOptionPane.WARNING_MESSAGE
+    );
+    return;
+}
+
+javax.swing.JOptionPane.showMessageDialog(
+    this,
+    "Dados preenchidos! Cadastro de professor aguardando integração.",
+    "Integração pendente",
+    javax.swing.JOptionPane.INFORMATION_MESSAGE
+);
+
     }//GEN-LAST:event_btnCadastrarProfessorActionPerformed
 
     private void btnListarProfessoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnListarProfessoresActionPerformed
-        // TODO add your handling code here:
+        
+javax.swing.JOptionPane.showMessageDialog(
+    this,
+    "A listagem de professores estará disponível "
+    + "após a integração com o CadastroService.",
+    "Listagem pendente",
+    javax.swing.JOptionPane.INFORMATION_MESSAGE
+);
+
     }//GEN-LAST:event_btnListarProfessoresActionPerformed
 
     private void txtNomeDisciplinaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNomeDisciplinaActionPerformed
@@ -578,11 +667,61 @@ public class JanelaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_txtNomeDisciplinaActionPerformed
 
     private void btnCadastrarDisciplinaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarDisciplinaActionPerformed
-        // TODO add your handling code here:
+        
+String nome = txtNomeDisciplina.getText().trim();
+String carga = txtCargaHoraria.getText().trim();
+
+if (nome.isEmpty() || carga.isEmpty()) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this,
+        "Preencha o nome e a carga horária da disciplina!",
+        "Campos obrigatórios",
+        javax.swing.JOptionPane.WARNING_MESSAGE
+    );
+    return;
+}
+
+try {
+    int cargaHoraria = Integer.parseInt(carga);
+
+    if (cargaHoraria <= 0) {
+        javax.swing.JOptionPane.showMessageDialog(
+            this,
+            "A carga horária deve ser maior que zero!",
+            "Valor inválido",
+            javax.swing.JOptionPane.WARNING_MESSAGE
+        );
+        return;
+    }
+
+    javax.swing.JOptionPane.showMessageDialog(
+        this,
+        "Dados válidos! Cadastro aguardando integração.",
+        "Integração pendente",
+        javax.swing.JOptionPane.INFORMATION_MESSAGE
+    );
+
+} catch (NumberFormatException e) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this,
+        "A carga horária deve ser um número inteiro!",
+        "Valor inválido",
+        javax.swing.JOptionPane.WARNING_MESSAGE
+    );
+}
+
     }//GEN-LAST:event_btnCadastrarDisciplinaActionPerformed
 
     private void btnListarDisciplinasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnListarDisciplinasActionPerformed
-        // TODO add your handling code here:
+        
+javax.swing.JOptionPane.showMessageDialog(
+    this,
+    "A listagem de disciplinas estará disponível "
+    + "após a integração com o CadastroService.",
+    "Listagem pendente",
+    javax.swing.JOptionPane.INFORMATION_MESSAGE
+);
+
     }//GEN-LAST:event_btnListarDisciplinasActionPerformed
 
     private void txtCargaHorariaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCargaHorariaActionPerformed
@@ -590,20 +729,244 @@ public class JanelaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_txtCargaHorariaActionPerformed
 
     private void btnListarTurmasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnListarTurmasActionPerformed
-        // TODO add your handling code here:
+        
+javax.swing.JOptionPane.showMessageDialog(
+    this,
+    "A listagem de turmas estará disponível "
+    + "após a integração com o CadastroService.",
+    "Listagem pendente",
+    javax.swing.JOptionPane.INFORMATION_MESSAGE
+);
+
     }//GEN-LAST:event_btnListarTurmasActionPerformed
 
     private void btnCadastrarTurmaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarTurmaActionPerformed
-        // TODO add your handling code here:
+        
+String vagasTexto = txtVagasTurma.getText().trim();
+
+if (vagasTexto.isEmpty()) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this,
+        "Informe a quantidade de vagas!",
+        "Campo obrigatório",
+        javax.swing.JOptionPane.WARNING_MESSAGE
+    );
+    return;
+}
+
+try {
+    int vagas = Integer.parseInt(vagasTexto);
+
+    if (vagas <= 0) {
+        javax.swing.JOptionPane.showMessageDialog(
+            this,
+            "A quantidade de vagas deve ser maior que zero!",
+            "Valor inválido",
+            javax.swing.JOptionPane.WARNING_MESSAGE
+        );
+        return;
+    }
+
+    if (cmbDisciplinaTurma.getSelectedItem() == null) {
+        javax.swing.JOptionPane.showMessageDialog(
+            this,
+            "Selecione uma disciplina cadastrada!",
+            "Disciplina obrigatória",
+            javax.swing.JOptionPane.WARNING_MESSAGE
+        );
+        return;
+    }
+
+    javax.swing.JOptionPane.showMessageDialog(
+        this,
+        "Dados preenchidos! Cadastro de turma aguardando integração.",
+        "Integração pendente",
+        javax.swing.JOptionPane.INFORMATION_MESSAGE
+    );
+
+} catch (NumberFormatException e) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this,
+        "A quantidade de vagas deve ser um número inteiro!",
+        "Valor inválido",
+        javax.swing.JOptionPane.WARNING_MESSAGE
+    );
+}
+
     }//GEN-LAST:event_btnCadastrarTurmaActionPerformed
 
     private void btnExcluirTurmaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirTurmaActionPerformed
-        // TODO add your handling code here:
+        
+int linha = tblTurmas.getSelectedRow();
+
+if (linha == -1) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this,
+        "Selecione uma turma na tabela para excluir!",
+        "Nenhuma turma selecionada",
+        javax.swing.JOptionPane.WARNING_MESSAGE
+    );
+    return;
+}
+
+javax.swing.JOptionPane.showMessageDialog(
+    this,
+    "Exclusão de turma aguardando integração "
+    + "com o CadastroService.",
+    "Integração pendente",
+    javax.swing.JOptionPane.INFORMATION_MESSAGE
+);
+
     }//GEN-LAST:event_btnExcluirTurmaActionPerformed
 
     private void btnMatricularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMatricularActionPerformed
-        // TODO add your handling code here:
+        
+if (cmbAlunoMatricula.getSelectedIndex() == -1) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this,
+        "Selecione um aluno cadastrado!",
+        "Aluno obrigatório",
+        javax.swing.JOptionPane.WARNING_MESSAGE
+    );
+    return;
+}
+
+if (cmbTurmaMatricula.getSelectedIndex() == -1) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this,
+        "Selecione uma turma cadastrada!",
+        "Turma obrigatória",
+        javax.swing.JOptionPane.WARNING_MESSAGE
+    );
+    return;
+}
+
+javax.swing.JOptionPane.showMessageDialog(
+    this,
+    "Matrícula aguardando integração com o MatriculaService.",
+    "Integração pendente",
+    javax.swing.JOptionPane.INFORMATION_MESSAGE
+);
+
     }//GEN-LAST:event_btnMatricularActionPerformed
+
+    private void btnListarAlunosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnListarAlunosActionPerformed
+        
+javax.swing.JOptionPane.showMessageDialog(
+    this,
+    "A listagem de alunos estará disponível "
+    + "após a integração com o CadastroService.",
+    "Listagem pendente",
+    javax.swing.JOptionPane.INFORMATION_MESSAGE
+);
+
+    }//GEN-LAST:event_btnListarAlunosActionPerformed
+
+    private void btnExcluirAlunoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirAlunoActionPerformed
+        
+int linha = tblAlunos.getSelectedRow();
+
+if (linha == -1) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this,
+        "Selecione um aluno na tabela para excluir!",
+        "Nenhum aluno selecionado",
+        javax.swing.JOptionPane.WARNING_MESSAGE
+    );
+    return;
+}
+
+javax.swing.JOptionPane.showMessageDialog(
+    this,
+    "Exclusão aguardando integração com o CadastroService.",
+    "Integração pendente",
+    javax.swing.JOptionPane.INFORMATION_MESSAGE
+);
+
+    }//GEN-LAST:event_btnExcluirAlunoActionPerformed
+
+    private void btnExcluirProfessorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirProfessorActionPerformed
+        
+int linha = tblProfessores.getSelectedRow();
+
+if (linha == -1) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this,
+        "Selecione um professor na tabela para excluir!",
+        "Nenhum professor selecionado",
+        javax.swing.JOptionPane.WARNING_MESSAGE
+    );
+    return;
+}
+
+javax.swing.JOptionPane.showMessageDialog(
+    this,
+    "Exclusão de professor aguardando integração "
+    + "com o CadastroService.",
+    "Integração pendente",
+    javax.swing.JOptionPane.INFORMATION_MESSAGE
+);
+
+    }//GEN-LAST:event_btnExcluirProfessorActionPerformed
+
+    private void btnExcluirDisciplinaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirDisciplinaActionPerformed
+        
+int linha = tblDisciplinas.getSelectedRow();
+
+if (linha == -1) {
+    javax.swing.JOptionPane.showMessageDialog(
+        this,
+        "Selecione uma disciplina na tabela para excluir!",
+        "Nenhuma disciplina selecionada",
+        javax.swing.JOptionPane.WARNING_MESSAGE
+    );
+    return;
+}
+
+javax.swing.JOptionPane.showMessageDialog(
+    this,
+    "Exclusão de disciplina aguardando integração "
+    + "com o CadastroService.",
+    "Integração pendente",
+    javax.swing.JOptionPane.INFORMATION_MESSAGE
+);
+
+    }//GEN-LAST:event_btnExcluirDisciplinaActionPerformed
+
+    private void btnCancelarMatriculaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarMatriculaActionPerformed
+        
+if (cmbAlunoMatricula.getSelectedIndex() == -1 ||
+    cmbTurmaMatricula.getSelectedIndex() == -1) {
+
+    javax.swing.JOptionPane.showMessageDialog(
+        this,
+        "Selecione um aluno e uma turma para cancelar a matrícula!",
+        "Seleção obrigatória",
+        javax.swing.JOptionPane.WARNING_MESSAGE
+    );
+    return;
+}
+
+javax.swing.JOptionPane.showMessageDialog(
+    this,
+    "Cancelamento aguardando integração com o MatriculaService.",
+    "Integração pendente",
+    javax.swing.JOptionPane.INFORMATION_MESSAGE
+);
+
+    }//GEN-LAST:event_btnCancelarMatriculaActionPerformed
+
+    private void btnSimularMatriculasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimularMatriculasActionPerformed
+        
+txtResultadosSimulacao.setText(
+    "SIMULAÇÃO DE MATRÍCULAS\n\n"
+    + "Status: Aguardando integração.\n\n"
+    + "O SimuladorMatriculas da Pessoa B "
+    + "ainda precisa ser conectado à interface.\n\n"
+    + "Nenhuma simulação foi executada."
+);
+
+    }//GEN-LAST:event_btnSimularMatriculasActionPerformed
 
     /**
      * @param args the command line arguments
@@ -658,6 +1021,7 @@ public class JanelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JTabbedPane jTabbedPane3;
     private javax.swing.JLabel lblAlunoMatricula;
     private javax.swing.JLabel lblCargaHoraria;
@@ -678,6 +1042,7 @@ public class JanelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JTable tblAlunos;
     private javax.swing.JTable tblDisciplinas;
     private javax.swing.JTable tblProfessores;
+    private javax.swing.JTable tblTurmas;
     private javax.swing.JTextField txtCargaHoraria;
     private javax.swing.JTextField txtCpf;
     private javax.swing.JTextField txtCpfProfessor;
