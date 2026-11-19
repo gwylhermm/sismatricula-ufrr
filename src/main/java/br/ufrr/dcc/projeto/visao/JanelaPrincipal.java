@@ -4,11 +4,29 @@
  */
 package br.ufrr.dcc.projeto.visao;
 
+import br.ufrr.dcc.projeto.servico.CadastroService;
+import br.ufrr.dcc.projeto.servico.MatriculaService;
+import br.ufrr.dcc.projeto.servico.SimuladorMatriculas;
+
+import br.ufrr.dcc.projeto.modelo.Aluno;
+import br.ufrr.dcc.projeto.modelo.Professor;
+import br.ufrr.dcc.projeto.modelo.Disciplina;
+import br.ufrr.dcc.projeto.modelo.Turma;
+import br.ufrr.dcc.projeto.excecoes.SisMatriculaException;
+import br.ufrr.dcc.projeto.excecoes.DadoInvalidoException;
+import br.ufrr.dcc.projeto.excecoes.EntidadeNaoEncontradaException;
+
+
 /**
  *
  * @author paiva
  */
 public class JanelaPrincipal extends javax.swing.JFrame {
+    
+private CadastroService cadastro;
+private MatriculaService matriculas;
+private SimuladorMatriculas simulador;
+
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(JanelaPrincipal.class.getName());
 
@@ -20,10 +38,78 @@ public class JanelaPrincipal extends javax.swing.JFrame {
         
     }
     
+public JanelaPrincipal(
+        CadastroService cadastro,
+        MatriculaService matriculas,
+        SimuladorMatriculas simulador) {
+
+    this();
+
+    this.cadastro = cadastro;
+    this.matriculas = matriculas;
+    this.simulador = simulador;
     
+    
+jTabbedPane3.addChangeListener(e -> {
+    if (jTabbedPane3.getSelectedComponent() == jPanel5) {
+        atualizarCombosTurmas();
+    }
+});
+
+
+jTabbedPane3.addChangeListener(e -> {
+    if (jTabbedPane3.getSelectedComponent() == jPanel6) {
+        atualizarCombosMatriculas();
+    }
+});
+
+
+}
+
 public void exibir() {
     setLocationRelativeTo(null);
     setVisible(true);
+}
+
+
+private void atualizarCombosTurmas() {
+
+    cmbDisciplinaTurma.removeAllItems();
+    cmbProfessorTurma.removeAllItems();
+
+    for (Disciplina d : cadastro.listarDisciplinas()) {
+        cmbDisciplinaTurma.addItem(
+                d.getCodigo() + " - " + d.getNome());
+    }
+
+    for (Professor p : cadastro.listarProfessores()) {
+        cmbProfessorTurma.addItem(
+                p.getId() + " - " + p.getNome());
+    }
+
+    cmbDisciplinaTurma.setSelectedIndex(-1);
+    cmbProfessorTurma.setSelectedIndex(-1);
+}
+
+
+private void atualizarCombosMatriculas() {
+
+    cmbAlunoMatricula.removeAllItems();
+    cmbTurmaMatricula.removeAllItems();
+
+    for (Aluno a : cadastro.listarAlunos()) {
+        cmbAlunoMatricula.addItem(
+                a.getId() + " - " + a.getNome());
+    }
+
+    for (Turma t : cadastro.listarTurmas()) {
+        cmbTurmaMatricula.addItem(
+                t.getId() + " - " + t.getCodigo()
+                + " - " + t.getDisciplina().getNome());
+    }
+
+    cmbAlunoMatricula.setSelectedIndex(-1);
+    cmbTurmaMatricula.setSelectedIndex(-1);
 }
 
 
@@ -703,6 +789,7 @@ private void atualizarTabela(
     private void btnCadastrarAlunoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarAlunoActionPerformed
         
 
+
 String nome = txtNome.getText().trim();
 String cpf = txtCpf.getText().trim();
 String matricula = txtMatriculaAcademicaAluno.getText().trim();
@@ -712,20 +799,62 @@ if (nome.isEmpty() || cpf.isEmpty()
         || matricula.isEmpty() || curso.isEmpty()) {
 
     javax.swing.JOptionPane.showMessageDialog(
-        this,
-        "Preencha todos os campos do aluno!",
-        "Campos obrigatórios",
-        javax.swing.JOptionPane.WARNING_MESSAGE
-    );
+            this,
+            "Preencha todos os campos do aluno!",
+            "Campos obrigatórios",
+            javax.swing.JOptionPane.WARNING_MESSAGE);
     return;
 }
 
-javax.swing.JOptionPane.showMessageDialog(
-    this,
-    "Dados preenchidos! Cadastro aguardando integração.",
-    "Integração pendente",
-    javax.swing.JOptionPane.INFORMATION_MESSAGE
-);
+String cpfNumeros = cpf.replaceAll("\\D", "");
+
+boolean alunoExiste = cadastro.listarAlunos().stream()
+        .anyMatch(a ->
+            a.getCpf().replaceAll("\\D", "").equals(cpfNumeros)
+            || a.getMatriculaAcademica().equalsIgnoreCase(matricula)
+        );
+
+if (alunoExiste) {
+    javax.swing.JOptionPane.showMessageDialog(
+            this,
+            "Aluno já cadastrado! CPF ou matrícula acadêmica repetidos.",
+            "Cadastro duplicado",
+            javax.swing.JOptionPane.WARNING_MESSAGE);
+    return;
+}
+
+try {
+    Aluno aluno = cadastro.cadastrarAluno(
+            nome, cpf, matricula, curso);
+
+    javax.swing.table.DefaultTableModel modelo =
+            (javax.swing.table.DefaultTableModel)
+            tblAlunos.getModel();
+
+    modelo.addRow(new Object[]{
+        aluno.getId(),
+        aluno.getNome(),
+        aluno.getCpf(),
+        aluno.getMatriculaAcademica(),
+        aluno.getCurso()
+    });
+
+    txtNome.setText("");
+    txtCpf.setText("");
+    txtMatriculaAcademicaAluno.setText("");
+    txtCursoAluno.setText("");
+
+    javax.swing.JOptionPane.showMessageDialog(
+            this,
+            "Aluno cadastrado com sucesso!");
+
+} catch (DadoInvalidoException e) {
+    javax.swing.JOptionPane.showMessageDialog(
+            this,
+            e.getMessage(),
+            "Erro no cadastro",
+            javax.swing.JOptionPane.ERROR_MESSAGE);
+}
 
 
     }//GEN-LAST:event_btnCadastrarAlunoActionPerformed
@@ -737,38 +866,90 @@ javax.swing.JOptionPane.showMessageDialog(
     private void btnCadastrarProfessorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarProfessorActionPerformed
         
 
+
 String nome = txtNomeProfessor.getText().trim();
 String cpf = txtCpfProfessor.getText().trim();
 String siape = txtSiapeProfessor.getText().trim();
 
 if (nome.isEmpty() || cpf.isEmpty() || siape.isEmpty()) {
     javax.swing.JOptionPane.showMessageDialog(
-        this,
-        "Preencha todos os campos do professor!",
-        "Campos obrigatórios",
-        javax.swing.JOptionPane.WARNING_MESSAGE
-    );
+            this,
+            "Preencha todos os campos do professor!",
+            "Campos obrigatórios",
+            javax.swing.JOptionPane.WARNING_MESSAGE);
     return;
 }
 
-javax.swing.JOptionPane.showMessageDialog(
-    this,
-    "Dados preenchidos! Cadastro de professor aguardando integração.",
-    "Integração pendente",
-    javax.swing.JOptionPane.INFORMATION_MESSAGE
-);
+String cpfNumeros = cpf.replaceAll("\\D", "");
+
+boolean professorExiste = cadastro.listarProfessores().stream()
+        .anyMatch(p ->
+            p.getCpf().replaceAll("\\D", "").equals(cpfNumeros)
+            || p.getSiape().equalsIgnoreCase(siape)
+        );
+
+if (professorExiste) {
+    javax.swing.JOptionPane.showMessageDialog(
+            this,
+            "Professor já cadastrado! CPF ou SIAPE repetidos.",
+            "Cadastro duplicado",
+            javax.swing.JOptionPane.WARNING_MESSAGE);
+    return;
+}
+
+try {
+    Professor professor = cadastro.cadastrarProfessor(
+            nome, cpf, siape);
+
+    javax.swing.table.DefaultTableModel modelo =
+            (javax.swing.table.DefaultTableModel)
+            tblProfessores.getModel();
+
+    modelo.addRow(new Object[]{
+        professor.getId(),
+        professor.getNome(),
+        professor.getCpf(),
+        professor.getSiape()
+    });
+
+    txtNomeProfessor.setText("");
+    txtCpfProfessor.setText("");
+    txtSiapeProfessor.setText("");
+
+    javax.swing.JOptionPane.showMessageDialog(
+            this,
+            "Professor cadastrado com sucesso!");
+
+} catch (DadoInvalidoException e) {
+    javax.swing.JOptionPane.showMessageDialog(
+            this,
+            e.getMessage(),
+            "Erro no cadastro",
+            javax.swing.JOptionPane.ERROR_MESSAGE);
+}
+
 
     }//GEN-LAST:event_btnCadastrarProfessorActionPerformed
 
     private void btnListarProfessoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnListarProfessoresActionPerformed
         
-javax.swing.JOptionPane.showMessageDialog(
-    this,
-    "A listagem de professores estará disponível "
-    + "após a integração com o CadastroService.",
-    "Listagem pendente",
-    javax.swing.JOptionPane.INFORMATION_MESSAGE
-);
+
+java.util.List<Professor> professores =
+        cadastro.listarProfessores();
+
+Object[][] dados = new Object[professores.size()][4];
+
+for (int i = 0; i < professores.size(); i++) {
+    Professor professor = professores.get(i);
+
+    dados[i][0] = professor.getId();
+    dados[i][1] = professor.getNome();
+    dados[i][2] = professor.getCpf();
+    dados[i][3] = professor.getSiape();
+}
+
+atualizarTabela(tblProfessores, dados);
+
 
     }//GEN-LAST:event_btnListarProfessoresActionPerformed
 
@@ -785,54 +966,79 @@ String carga = txtCargaHoraria.getText().trim();
 
 if (codigo.isEmpty() || nome.isEmpty() || carga.isEmpty()) {
     javax.swing.JOptionPane.showMessageDialog(
-        this,
-        "Preencha todos os campos da disciplina!",
-        "Campos obrigatórios",
-        javax.swing.JOptionPane.WARNING_MESSAGE
-    );
+            this, "Preencha todos os campos da disciplina!");
+    return;
+}
+
+boolean disciplinaExiste = cadastro.listarDisciplinas().stream()
+        .anyMatch(d ->
+            d.getCodigo().trim().equalsIgnoreCase(codigo)
+        );
+
+if (disciplinaExiste) {
+    javax.swing.JOptionPane.showMessageDialog(
+            this,
+            "Já existe uma disciplina com esse código!",
+            "Cadastro duplicado",
+            javax.swing.JOptionPane.WARNING_MESSAGE);
     return;
 }
 
 try {
     int cargaHoraria = Integer.parseInt(carga);
 
-    if (cargaHoraria <= 0) {
-        javax.swing.JOptionPane.showMessageDialog(
-            this,
-            "A carga horária deve ser maior que zero!",
-            "Valor inválido",
-            javax.swing.JOptionPane.WARNING_MESSAGE
-        );
-        return;
-    }
+    Disciplina disciplina = cadastro.cadastrarDisciplina(
+            codigo, nome, cargaHoraria);
+
+    javax.swing.table.DefaultTableModel modelo =
+            (javax.swing.table.DefaultTableModel)
+            tblDisciplinas.getModel();
+
+    modelo.addRow(new Object[]{
+        disciplina.getId(),
+        disciplina.getCodigo(),
+        disciplina.getNome(),
+        disciplina.getCargaHoraria()
+    });
+
+    txtCodigoDisciplina.setText("");
+    txtNomeDisciplina.setText("");
+    txtCargaHoraria.setText("");
 
     javax.swing.JOptionPane.showMessageDialog(
-        this,
-        "Dados válidos! Cadastro aguardando integração.",
-        "Integração pendente",
-        javax.swing.JOptionPane.INFORMATION_MESSAGE
-    );
+            this, "Disciplina cadastrada com sucesso!");
 
 } catch (NumberFormatException e) {
     javax.swing.JOptionPane.showMessageDialog(
-        this,
-        "A carga horária deve ser um número inteiro!",
-        "Valor inválido",
-        javax.swing.JOptionPane.WARNING_MESSAGE
-    );
+            this, "A carga horária deve ser um número inteiro!");
+
+} catch (DadoInvalidoException e) {
+    javax.swing.JOptionPane.showMessageDialog(
+            this, e.getMessage(), "Erro no cadastro",
+            javax.swing.JOptionPane.ERROR_MESSAGE);
 }
 
     }//GEN-LAST:event_btnCadastrarDisciplinaActionPerformed
 
     private void btnListarDisciplinasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnListarDisciplinasActionPerformed
         
-javax.swing.JOptionPane.showMessageDialog(
-    this,
-    "A listagem de disciplinas estará disponível "
-    + "após a integração com o CadastroService.",
-    "Listagem pendente",
-    javax.swing.JOptionPane.INFORMATION_MESSAGE
-);
+
+java.util.List<Disciplina> disciplinas =
+        cadastro.listarDisciplinas();
+
+Object[][] dados = new Object[disciplinas.size()][4];
+
+for (int i = 0; i < disciplinas.size(); i++) {
+    Disciplina disciplina = disciplinas.get(i);
+
+    dados[i][0] = disciplina.getId();
+    dados[i][1] = disciplina.getCodigo();
+    dados[i][2] = disciplina.getNome();
+    dados[i][3] = disciplina.getCargaHoraria();
+}
+
+atualizarTabela(tblDisciplinas, dados);
+
 
     }//GEN-LAST:event_btnListarDisciplinasActionPerformed
 
@@ -842,13 +1048,22 @@ javax.swing.JOptionPane.showMessageDialog(
 
     private void btnListarTurmasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnListarTurmasActionPerformed
         
-javax.swing.JOptionPane.showMessageDialog(
-    this,
-    "A listagem de turmas estará disponível "
-    + "após a integração com o CadastroService.",
-    "Listagem pendente",
-    javax.swing.JOptionPane.INFORMATION_MESSAGE
-);
+
+java.util.List<Turma> turmas = cadastro.listarTurmas();
+
+Object[][] dados = new Object[turmas.size()][5];
+
+for (int i = 0; i < turmas.size(); i++) {
+    Turma turma = turmas.get(i);
+
+    dados[i][0] = turma.getId();
+    dados[i][1] = turma.getDisciplina().getNome();
+    dados[i][2] = turma.getProfessor().getNome();
+    dados[i][3] = turma.getTotalVagas();
+    dados[i][4] = turma.getCodigo();
+}
+
+atualizarTabela(tblTurmas, dados);
 
     }//GEN-LAST:event_btnListarTurmasActionPerformed
 
@@ -860,61 +1075,74 @@ String vagasTexto = txtVagasTurma.getText().trim();
 
 if (codigo.isEmpty() || vagasTexto.isEmpty()) {
     javax.swing.JOptionPane.showMessageDialog(
-        this,
-        "Preencha o código e a quantidade de vagas!",
-        "Campos obrigatórios",
-        javax.swing.JOptionPane.WARNING_MESSAGE
-    );
+            this, "Preencha o código e as vagas!");
+    return;
+}
+
+int indiceDisciplina = cmbDisciplinaTurma.getSelectedIndex();
+int indiceProfessor = cmbProfessorTurma.getSelectedIndex();
+
+if (indiceDisciplina == -1 || indiceProfessor == -1) {
+    javax.swing.JOptionPane.showMessageDialog(
+            this, "Selecione uma disciplina e um professor!");
+    return;
+}
+
+boolean turmaExiste = cadastro.listarTurmas().stream()
+        .anyMatch(t ->
+            t.getCodigo().trim().equalsIgnoreCase(codigo)
+        );
+
+if (turmaExiste) {
+    javax.swing.JOptionPane.showMessageDialog(
+            this,
+            "Já existe uma turma com esse código!",
+            "Cadastro duplicado",
+            javax.swing.JOptionPane.WARNING_MESSAGE);
     return;
 }
 
 try {
     int vagas = Integer.parseInt(vagasTexto);
 
-    if (vagas <= 0) {
-        javax.swing.JOptionPane.showMessageDialog(
-            this,
-            "A quantidade de vagas deve ser maior que zero!",
-            "Valor inválido",
-            javax.swing.JOptionPane.WARNING_MESSAGE
-        );
-        return;
-    }
+    Disciplina disciplina = cadastro.listarDisciplinas()
+            .get(indiceDisciplina);
 
-    if (cmbDisciplinaTurma.getSelectedIndex() == -1) {
-        javax.swing.JOptionPane.showMessageDialog(
-            this,
-            "Selecione uma disciplina!",
-            "Disciplina obrigatória",
-            javax.swing.JOptionPane.WARNING_MESSAGE
-        );
-        return;
-    }
+    Professor professor = cadastro.listarProfessores()
+            .get(indiceProfessor);
 
-    if (cmbProfessorTurma.getSelectedIndex() == -1) {
-        javax.swing.JOptionPane.showMessageDialog(
-            this,
-            "Selecione um professor!",
-            "Professor obrigatório",
-            javax.swing.JOptionPane.WARNING_MESSAGE
-        );
-        return;
-    }
+    Turma turma = cadastro.cadastrarTurma(
+            codigo, vagas, disciplina, professor);
+
+    javax.swing.table.DefaultTableModel modelo =
+            (javax.swing.table.DefaultTableModel)
+            tblTurmas.getModel();
+
+    modelo.addRow(new Object[]{
+        turma.getId(),
+        turma.getDisciplina().getNome(),
+        turma.getProfessor().getNome(),
+        turma.getTotalVagas(),
+        turma.getCodigo()
+    });
+
+    txtCodigoTurma.setText("");
+    txtVagasTurma.setText("");
+
+    atualizarCombosTurmas();
 
     javax.swing.JOptionPane.showMessageDialog(
-        this,
-        "Dados válidos! Cadastro de turma aguardando integração.",
-        "Integração pendente",
-        javax.swing.JOptionPane.INFORMATION_MESSAGE
-    );
+            this, "Turma cadastrada com sucesso!");
 
 } catch (NumberFormatException e) {
     javax.swing.JOptionPane.showMessageDialog(
-        this,
-        "A quantidade de vagas deve ser um número inteiro!",
-        "Valor inválido",
-        javax.swing.JOptionPane.WARNING_MESSAGE
-    );
+            this, "As vagas devem ser um número inteiro!");
+
+} catch (DadoInvalidoException e) {
+    javax.swing.JOptionPane.showMessageDialog(
+            this, e.getMessage(),
+            "Erro no cadastro",
+            javax.swing.JOptionPane.ERROR_MESSAGE);
 }
 
 
@@ -922,174 +1150,430 @@ try {
 
     private void btnExcluirTurmaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirTurmaActionPerformed
         
+
 int linha = tblTurmas.getSelectedRow();
 
 if (linha == -1) {
     javax.swing.JOptionPane.showMessageDialog(
-        this,
-        "Selecione uma turma na tabela para excluir!",
-        "Nenhuma turma selecionada",
-        javax.swing.JOptionPane.WARNING_MESSAGE
-    );
+            this, "Selecione uma turma para excluir!");
     return;
 }
 
-javax.swing.JOptionPane.showMessageDialog(
-    this,
-    "Exclusão de turma aguardando integração "
-    + "com o CadastroService.",
-    "Integração pendente",
-    javax.swing.JOptionPane.INFORMATION_MESSAGE
-);
+int linhaModelo = tblTurmas.convertRowIndexToModel(linha);
+
+javax.swing.table.DefaultTableModel modelo =
+        (javax.swing.table.DefaultTableModel)
+        tblTurmas.getModel();
+
+int id = ((Number) modelo.getValueAt(
+        linhaModelo, 0)).intValue();
+
+boolean turmaPossuiMatriculas = cadastro.listarTurmas().stream()
+        .filter(turma -> turma.getId() == id)
+        .anyMatch(turma ->
+                turma.getMatriculas().stream()
+                        .anyMatch(matricula -> matricula.isAtiva())
+        );
+
+if (turmaPossuiMatriculas) {
+    javax.swing.JOptionPane.showMessageDialog(
+            this,
+            "Esta turma possui alunos matriculados. "
+            + "Cancele as matrículas antes de excluir.",
+            "Exclusão não permitida",
+            javax.swing.JOptionPane.WARNING_MESSAGE);
+    return;
+}
+
+int confirmacao = javax.swing.JOptionPane.showConfirmDialog(
+        this,
+        "Deseja realmente excluir esta turma?",
+        "Confirmar exclusão",
+        javax.swing.JOptionPane.YES_NO_OPTION);
+
+if (confirmacao != javax.swing.JOptionPane.YES_OPTION) {
+    return;
+}
+
+try {
+    cadastro.excluirTurma(id);
+
+    modelo.removeRow(linhaModelo);
+
+    javax.swing.JOptionPane.showMessageDialog(
+            this, "Turma excluída com sucesso!");
+
+} catch (EntidadeNaoEncontradaException e) {
+    javax.swing.JOptionPane.showMessageDialog(
+            this, e.getMessage(),
+            "Erro ao excluir",
+            javax.swing.JOptionPane.ERROR_MESSAGE);
+}
+
 
     }//GEN-LAST:event_btnExcluirTurmaActionPerformed
 
     private void btnMatricularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMatricularActionPerformed
         
-if (cmbAlunoMatricula.getSelectedIndex() == -1) {
+
+int indiceAluno = cmbAlunoMatricula.getSelectedIndex();
+int indiceTurma = cmbTurmaMatricula.getSelectedIndex();
+
+if (indiceAluno == -1 || indiceTurma == -1) {
     javax.swing.JOptionPane.showMessageDialog(
-        this,
-        "Selecione um aluno cadastrado!",
-        "Aluno obrigatório",
-        javax.swing.JOptionPane.WARNING_MESSAGE
-    );
+            this, "Selecione um aluno e uma turma!");
     return;
 }
 
-if (cmbTurmaMatricula.getSelectedIndex() == -1) {
+Aluno aluno = cadastro.listarAlunos().get(indiceAluno);
+Turma turma = cadastro.listarTurmas().get(indiceTurma);
+
+try {
+    matriculas.matricular(aluno, turma);
+
     javax.swing.JOptionPane.showMessageDialog(
-        this,
-        "Selecione uma turma cadastrada!",
-        "Turma obrigatória",
-        javax.swing.JOptionPane.WARNING_MESSAGE
-    );
-    return;
+            this, "Matrícula realizada com sucesso!");
+
+    txtResultadosSimulacao.append(
+            "MATRÍCULA: " + aluno.getNome()
+            + " na turma " + turma.getCodigo() + "\n");
+
+} catch (SisMatriculaException e) {
+    javax.swing.JOptionPane.showMessageDialog(
+            this, e.getMessage(), "Erro na matrícula",
+            javax.swing.JOptionPane.ERROR_MESSAGE);
 }
 
-javax.swing.JOptionPane.showMessageDialog(
-    this,
-    "Matrícula aguardando integração com o MatriculaService.",
-    "Integração pendente",
-    javax.swing.JOptionPane.INFORMATION_MESSAGE
-);
 
     }//GEN-LAST:event_btnMatricularActionPerformed
 
     private void btnListarAlunosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnListarAlunosActionPerformed
         
-javax.swing.JOptionPane.showMessageDialog(
-    this,
-    "A listagem de alunos estará disponível "
-    + "após a integração com o CadastroService.",
-    "Listagem pendente",
-    javax.swing.JOptionPane.INFORMATION_MESSAGE
-);
+
+java.util.List<Aluno> alunos = cadastro.listarAlunos();
+
+Object[][] dados = new Object[alunos.size()][5];
+
+for (int i = 0; i < alunos.size(); i++) {
+    Aluno aluno = alunos.get(i);
+
+    dados[i][0] = aluno.getId();
+    dados[i][1] = aluno.getNome();
+    dados[i][2] = aluno.getCpf();
+    dados[i][3] = aluno.getMatriculaAcademica();
+    dados[i][4] = aluno.getCurso();
+}
+
+atualizarTabela(tblAlunos, dados);
+
 
     }//GEN-LAST:event_btnListarAlunosActionPerformed
 
     private void btnExcluirAlunoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirAlunoActionPerformed
         
+
 int linha = tblAlunos.getSelectedRow();
 
 if (linha == -1) {
     javax.swing.JOptionPane.showMessageDialog(
-        this,
-        "Selecione um aluno na tabela para excluir!",
-        "Nenhum aluno selecionado",
-        javax.swing.JOptionPane.WARNING_MESSAGE
-    );
+            this,
+            "Selecione um aluno na tabela para excluir!");
     return;
 }
 
-javax.swing.JOptionPane.showMessageDialog(
-    this,
-    "Exclusão aguardando integração com o CadastroService.",
-    "Integração pendente",
-    javax.swing.JOptionPane.INFORMATION_MESSAGE
-);
+int linhaModelo = tblAlunos.convertRowIndexToModel(linha);
+
+javax.swing.table.DefaultTableModel modelo =
+        (javax.swing.table.DefaultTableModel)
+        tblAlunos.getModel();
+
+int id = ((Number) modelo.getValueAt(
+        linhaModelo, 0)).intValue();
+
+boolean possuiMatriculaAtiva = cadastro.listarTurmas().stream()
+        .anyMatch(turma ->
+                turma.getMatriculas().stream()
+                        .anyMatch(matricula ->
+                                matricula.isAtiva()
+                                && matricula.getAluno().getId() == id
+                        )
+        );
+
+if (possuiMatriculaAtiva) {
+    javax.swing.JOptionPane.showMessageDialog(
+            this,
+            "Este aluno possui matrícula ativa. "
+            + "Cancele a matrícula antes de excluir.",
+            "Exclusão não permitida",
+            javax.swing.JOptionPane.WARNING_MESSAGE);
+    return;
+}
+
+int confirmacao = javax.swing.JOptionPane.showConfirmDialog(
+        this,
+        "Deseja realmente excluir este aluno?",
+        "Confirmar exclusão",
+        javax.swing.JOptionPane.YES_NO_OPTION);
+
+if (confirmacao != javax.swing.JOptionPane.YES_OPTION) {
+    return;
+}
+
+try {
+    cadastro.excluirAluno(id);
+
+    modelo.removeRow(linhaModelo);
+
+    javax.swing.JOptionPane.showMessageDialog(
+            this,
+            "Aluno excluído com sucesso!");
+
+} catch (EntidadeNaoEncontradaException e) {
+    javax.swing.JOptionPane.showMessageDialog(
+            this,
+            e.getMessage(),
+            "Erro ao excluir",
+            javax.swing.JOptionPane.ERROR_MESSAGE);
+}
+
 
     }//GEN-LAST:event_btnExcluirAlunoActionPerformed
 
     private void btnExcluirProfessorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirProfessorActionPerformed
         
+
 int linha = tblProfessores.getSelectedRow();
 
 if (linha == -1) {
     javax.swing.JOptionPane.showMessageDialog(
-        this,
-        "Selecione um professor na tabela para excluir!",
-        "Nenhum professor selecionado",
-        javax.swing.JOptionPane.WARNING_MESSAGE
-    );
+            this,
+            "Selecione um professor na tabela para excluir!");
     return;
 }
 
-javax.swing.JOptionPane.showMessageDialog(
-    this,
-    "Exclusão de professor aguardando integração "
-    + "com o CadastroService.",
-    "Integração pendente",
-    javax.swing.JOptionPane.INFORMATION_MESSAGE
-);
+int linhaModelo =
+        tblProfessores.convertRowIndexToModel(linha);
+
+javax.swing.table.DefaultTableModel modelo =
+        (javax.swing.table.DefaultTableModel)
+        tblProfessores.getModel();
+
+int id = ((Number) modelo.getValueAt(
+        linhaModelo, 0)).intValue();
+
+boolean professorVinculado = cadastro.listarTurmas().stream()
+        .anyMatch(turma ->
+                turma.getProfessor().getId() == id
+        );
+
+if (professorVinculado) {
+    javax.swing.JOptionPane.showMessageDialog(
+            this,
+            "Este professor está vinculado a uma turma. "
+            + "Exclua a turma antes de excluir o professor.",
+            "Exclusão não permitida",
+            javax.swing.JOptionPane.WARNING_MESSAGE);
+    return;
+}
+
+int confirmacao = javax.swing.JOptionPane.showConfirmDialog(
+        this,
+        "Deseja realmente excluir este professor?",
+        "Confirmar exclusão",
+        javax.swing.JOptionPane.YES_NO_OPTION);
+
+if (confirmacao != javax.swing.JOptionPane.YES_OPTION) {
+    return;
+}
+
+try {
+    cadastro.excluirProfessor(id);
+
+    modelo.removeRow(linhaModelo);
+
+    javax.swing.JOptionPane.showMessageDialog(
+            this,
+            "Professor excluído com sucesso!");
+
+} catch (EntidadeNaoEncontradaException e) {
+    javax.swing.JOptionPane.showMessageDialog(
+            this,
+            e.getMessage(),
+            "Erro ao excluir professor",
+            javax.swing.JOptionPane.ERROR_MESSAGE);
+}
+
 
     }//GEN-LAST:event_btnExcluirProfessorActionPerformed
 
     private void btnExcluirDisciplinaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirDisciplinaActionPerformed
         
+
 int linha = tblDisciplinas.getSelectedRow();
 
 if (linha == -1) {
     javax.swing.JOptionPane.showMessageDialog(
-        this,
-        "Selecione uma disciplina na tabela para excluir!",
-        "Nenhuma disciplina selecionada",
-        javax.swing.JOptionPane.WARNING_MESSAGE
-    );
+            this, "Selecione uma disciplina na tabela!");
     return;
 }
 
-javax.swing.JOptionPane.showMessageDialog(
-    this,
-    "Exclusão de disciplina aguardando integração "
-    + "com o CadastroService.",
-    "Integração pendente",
-    javax.swing.JOptionPane.INFORMATION_MESSAGE
-);
+int linhaModelo =
+        tblDisciplinas.convertRowIndexToModel(linha);
+
+javax.swing.table.DefaultTableModel modelo =
+        (javax.swing.table.DefaultTableModel)
+        tblDisciplinas.getModel();
+
+int id = ((Number) modelo.getValueAt(
+        linhaModelo, 0)).intValue();
+
+boolean disciplinaVinculada = cadastro.listarTurmas().stream()
+        .anyMatch(turma ->
+                turma.getDisciplina().getId() == id
+        );
+
+if (disciplinaVinculada) {
+    javax.swing.JOptionPane.showMessageDialog(
+            this,
+            "Esta disciplina está vinculada a uma turma. "
+            + "Exclua a turma antes de excluir a disciplina.",
+            "Exclusão não permitida",
+            javax.swing.JOptionPane.WARNING_MESSAGE);
+    return;
+}
+
+int confirmacao = javax.swing.JOptionPane.showConfirmDialog(
+        this,
+        "Deseja realmente excluir esta disciplina?",
+        "Confirmar exclusão",
+        javax.swing.JOptionPane.YES_NO_OPTION);
+
+if (confirmacao != javax.swing.JOptionPane.YES_OPTION) {
+    return;
+}
+
+try {
+    cadastro.excluirDisciplina(id);
+
+    modelo.removeRow(linhaModelo);
+
+    javax.swing.JOptionPane.showMessageDialog(
+            this, "Disciplina excluída com sucesso!");
+
+} catch (EntidadeNaoEncontradaException e) {
+    javax.swing.JOptionPane.showMessageDialog(
+            this,
+            e.getMessage(),
+            "Erro ao excluir",
+            javax.swing.JOptionPane.ERROR_MESSAGE);
+}
+
 
     }//GEN-LAST:event_btnExcluirDisciplinaActionPerformed
 
     private void btnCancelarMatriculaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarMatriculaActionPerformed
         
-if (cmbAlunoMatricula.getSelectedIndex() == -1 ||
-    cmbTurmaMatricula.getSelectedIndex() == -1) {
 
+int indiceAluno = cmbAlunoMatricula.getSelectedIndex();
+int indiceTurma = cmbTurmaMatricula.getSelectedIndex();
+
+if (indiceAluno == -1 || indiceTurma == -1) {
     javax.swing.JOptionPane.showMessageDialog(
-        this,
-        "Selecione um aluno e uma turma para cancelar a matrícula!",
-        "Seleção obrigatória",
-        javax.swing.JOptionPane.WARNING_MESSAGE
-    );
+            this, "Selecione um aluno e uma turma!");
     return;
 }
 
-javax.swing.JOptionPane.showMessageDialog(
-    this,
-    "Cancelamento aguardando integração com o MatriculaService.",
-    "Integração pendente",
-    javax.swing.JOptionPane.INFORMATION_MESSAGE
-);
+Aluno aluno = cadastro.listarAlunos().get(indiceAluno);
+Turma turma = cadastro.listarTurmas().get(indiceTurma);
+
+int confirmacao = javax.swing.JOptionPane.showConfirmDialog(
+        this,
+        "Deseja cancelar a matrícula deste aluno?",
+        "Confirmar cancelamento",
+        javax.swing.JOptionPane.YES_NO_OPTION);
+
+if (confirmacao != javax.swing.JOptionPane.YES_OPTION) {
+    return;
+}
+
+try {
+    matriculas.cancelar(aluno, turma);
+
+    javax.swing.JOptionPane.showMessageDialog(
+            this, "Matrícula cancelada com sucesso!");
+
+    txtResultadosSimulacao.append(
+            "CANCELAMENTO: " + aluno.getNome()
+            + " na turma " + turma.getCodigo() + "\n");
+
+} catch (SisMatriculaException e) {
+    javax.swing.JOptionPane.showMessageDialog(
+            this, e.getMessage(), "Erro no cancelamento",
+            javax.swing.JOptionPane.ERROR_MESSAGE);
+}
+
 
     }//GEN-LAST:event_btnCancelarMatriculaActionPerformed
 
     private void btnSimularMatriculasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimularMatriculasActionPerformed
         
+
+int indiceTurma = cmbTurmaMatricula.getSelectedIndex();
+
+if (indiceTurma == -1) {
+    javax.swing.JOptionPane.showMessageDialog(
+            this, "Selecione uma turma para simular!");
+    return;
+}
+
+Turma turma = cadastro.listarTurmas().get(indiceTurma);
+java.util.List<Aluno> alunos = cadastro.listarAlunos();
+
+if (alunos.isEmpty()) {
+    javax.swing.JOptionPane.showMessageDialog(
+            this, "Cadastre alunos antes da simulação!");
+    return;
+}
+
+btnSimularMatriculas.setEnabled(false);
+
 txtResultadosSimulacao.setText(
-    "SIMULAÇÃO DE MATRÍCULAS\n\n"
-    + "Status: Aguardando integração.\n\n"
-    + "O SimuladorMatriculas da Pessoa B "
-    + "ainda precisa ser conectado à interface.\n\n"
-    + "Nenhuma simulação foi executada."
-);
+        "Simulando matrículas na turma "
+        + turma.getCodigo() + "...\n");
+
+new javax.swing.SwingWorker<java.util.List<String>, Void>() {
+
+    @Override
+    protected java.util.List<String> doInBackground() {
+        return simulador.simular(turma, alunos);
+    }
+
+    @Override
+    protected void done() {
+        try {
+            java.util.List<String> resultados = get();
+
+            txtResultadosSimulacao.setText(
+                    "RESULTADOS DA SIMULAÇÃO\n"
+                    + "Turma: " + turma.getCodigo() + "\n"
+                    + "Total de tentativas: "
+                    + resultados.size() + "\n\n"
+                    + String.join("\n", resultados));
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            txtResultadosSimulacao.setText(
+                    "Simulação interrompida.");
+
+        } catch (java.util.concurrent.ExecutionException e) {
+            txtResultadosSimulacao.setText(
+                    "Erro na simulação: " + e.getCause());
+
+        } finally {
+            btnSimularMatriculas.setEnabled(true);
+        }
+    }
+}.execute();
 
     }//GEN-LAST:event_btnSimularMatriculasActionPerformed
 
