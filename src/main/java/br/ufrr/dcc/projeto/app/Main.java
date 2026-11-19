@@ -9,8 +9,8 @@ public class Main {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             JanelaPrincipal janela = new JanelaPrincipal();
-            janela.setLocationRelativeTo(null);
-            janela.setVisible(true);
+            janela.exibir();
         });
     }
 }
+

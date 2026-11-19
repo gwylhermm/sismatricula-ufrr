@@ -17,7 +17,31 @@ public class JanelaPrincipal extends javax.swing.JFrame {
      */
     public JanelaPrincipal() {
         initComponents();
+        
     }
+    
+    
+public void exibir() {
+    setLocationRelativeTo(null);
+    setVisible(true);
+}
+
+
+private void atualizarTabela(
+        javax.swing.JTable tabela,
+        Object[][] dados) {
+
+    javax.swing.table.DefaultTableModel modelo =
+        (javax.swing.table.DefaultTableModel) tabela.getModel();
+
+    modelo.setRowCount(0);
+
+    for (Object[] linha : dados) {
+        modelo.addRow(linha);
+    }
+}
+
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -40,6 +64,10 @@ public class JanelaPrincipal extends javax.swing.JFrame {
         btnListarAlunos = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblAlunos = new javax.swing.JTable();
+        lblMatriculaAcademicaAluno = new javax.swing.JLabel();
+        txtMatriculaAcademicaAluno = new javax.swing.JTextField();
+        lblCursoAluno = new javax.swing.JLabel();
+        txtCursoAluno = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         lblTituloProfessores = new javax.swing.JLabel();
         lblNomeProfessor = new javax.swing.JLabel();
@@ -51,6 +79,8 @@ public class JanelaPrincipal extends javax.swing.JFrame {
         btnListarProfessores = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         tblProfessores = new javax.swing.JTable();
+        lblSiapeProfessor = new javax.swing.JLabel();
+        txtSiapeProfessor = new javax.swing.JTextField();
         jPanel4 = new javax.swing.JPanel();
         lblTituloDisciplinas = new javax.swing.JLabel();
         lblNomeDisciplina = new javax.swing.JLabel();
@@ -62,6 +92,8 @@ public class JanelaPrincipal extends javax.swing.JFrame {
         btnListarDisciplinas = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
         tblDisciplinas = new javax.swing.JTable();
+        lblCodigoDisciplina = new javax.swing.JLabel();
+        txtCodigoDisciplina = new javax.swing.JTextField();
         jPanel5 = new javax.swing.JPanel();
         lblTituloTurmas = new javax.swing.JLabel();
         lblDisciplinaTurma = new javax.swing.JLabel();
@@ -73,6 +105,10 @@ public class JanelaPrincipal extends javax.swing.JFrame {
         btnListarTurmas = new javax.swing.JButton();
         jScrollPane5 = new javax.swing.JScrollPane();
         tblTurmas = new javax.swing.JTable();
+        lblCodigoTurma = new javax.swing.JLabel();
+        txtCodigoTurma = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        cmbProfessorTurma = new javax.swing.JComboBox<>();
         jPanel6 = new javax.swing.JPanel();
         lblTituloMatriculas = new javax.swing.JLabel();
         lblAlunoMatricula = new javax.swing.JLabel();
@@ -108,20 +144,17 @@ public class JanelaPrincipal extends javax.swing.JFrame {
 
         tblAlunos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+
             },
             new String [] {
-                "ID", "Nome Completo", "CPF"
+                "ID", "Nome Completo", "CPF", "Matrícula Acadêmica", "Curso"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false
+                false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -134,6 +167,12 @@ public class JanelaPrincipal extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(tblAlunos);
 
+        lblMatriculaAcademicaAluno.setText("Matrícula Acadêmica:");
+
+        lblCursoAluno.setText("Curso:");
+
+        txtCursoAluno.addActionListener(this::txtCursoAlunoActionPerformed);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -141,32 +180,43 @@ public class JanelaPrincipal extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(357, 357, 357)
-                        .addComponent(btnCadastrarAluno)
-                        .addGap(36, 36, 36)
-                        .addComponent(btnExcluirAluno)
-                        .addGap(38, 38, 38)
-                        .addComponent(btnListarAlunos))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(jPanel1Layout.createSequentialGroup()
+                                    .addGap(312, 312, 312)
+                                    .addComponent(lblNome)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED))
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                    .addContainerGap()
+                                    .addComponent(lblCpf)
+                                    .addGap(43, 43, 43)))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(304, 304, 304)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblMatriculaAcademicaAluno)
+                                    .addComponent(btnCadastrarAluno))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(312, 312, 312)
-                                .addComponent(lblNome)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(lblCpf)
-                                .addGap(43, 43, 43)))
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtCpf, javax.swing.GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE)
-                            .addComponent(txtNome)))
+                                .addGap(28, 28, 28)
+                                .addComponent(btnExcluirAluno)
+                                .addGap(73, 73, 73)
+                                .addComponent(btnListarAlunos))
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(txtCursoAluno)
+                                .addComponent(txtMatriculaAcademicaAluno)
+                                .addComponent(txtCpf, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE)
+                                .addComponent(txtNome, javax.swing.GroupLayout.Alignment.LEADING))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(423, 423, 423)
                         .addComponent(lblTituloAlunos))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(221, 221, 221)
+                        .addGap(331, 331, 331)
+                        .addComponent(lblCursoAluno))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(179, 179, 179)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 650, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(229, Short.MAX_VALUE))
+                .addContainerGap(271, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -181,14 +231,22 @@ public class JanelaPrincipal extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtCpf, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblCpf))
-                .addGap(31, 31, 31)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblMatriculaAcademicaAluno)
+                    .addComponent(txtMatriculaAcademicaAluno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblCursoAluno)
+                    .addComponent(txtCursoAluno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(43, 43, 43)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnCadastrarAluno)
                     .addComponent(btnExcluirAluno)
                     .addComponent(btnListarAlunos))
-                .addGap(36, 36, 36)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 398, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(40, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 53, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 312, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(27, 27, 27))
         );
 
         jTabbedPane3.addTab("Alunos", jPanel1);
@@ -213,20 +271,17 @@ public class JanelaPrincipal extends javax.swing.JFrame {
 
         tblProfessores.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+
             },
             new String [] {
-                "ID", "Nome Completo", "CPF"
+                "ID", "Nome Completo", "CPF", "SIAPE"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false
+                false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -239,6 +294,10 @@ public class JanelaPrincipal extends javax.swing.JFrame {
         });
         jScrollPane2.setViewportView(tblProfessores);
 
+        lblSiapeProfessor.setText("SIAPE:");
+
+        txtSiapeProfessor.addActionListener(this::txtSiapeProfessorActionPerformed);
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -248,23 +307,30 @@ public class JanelaPrincipal extends javax.swing.JFrame {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(375, 375, 375)
                         .addComponent(lblTituloProfessores))
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                            .addGap(287, 287, 287)
-                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(287, 287, 287)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblNomeProfessor)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(btnCadastrarProfessor)
-                                .addComponent(lblNomeProfessor))
-                            .addGap(36, 36, 36)
-                            .addComponent(btnExcluirProfessor)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
-                            .addComponent(btnListarProfessores))
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                            .addGap(317, 317, 317)
-                            .addComponent(lblCpfProfessor)
-                            .addGap(60, 60, 60)
-                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(txtNomeProfessor, javax.swing.GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE)
-                                .addComponent(txtCpfProfessor))))
+                                .addGap(45, 45, 45)
+                                .addComponent(btnExcluirProfessor))))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(317, 317, 317)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(btnListarProfessores)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                        .addComponent(lblCpfProfessor)
+                                        .addGap(60, 60, 60))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                        .addComponent(lblSiapeProfessor)
+                                        .addGap(51, 51, 51)))
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(txtNomeProfessor, javax.swing.GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE)
+                                    .addComponent(txtCpfProfessor)
+                                    .addComponent(txtSiapeProfessor)))))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(152, 152, 152)
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 650, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -283,14 +349,18 @@ public class JanelaPrincipal extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblCpfProfessor)
                     .addComponent(txtCpfProfessor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(37, 37, 37)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblSiapeProfessor)
+                    .addComponent(txtSiapeProfessor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(24, 24, 24)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnCadastrarProfessor)
                     .addComponent(btnExcluirProfessor)
                     .addComponent(btnListarProfessores))
-                .addGap(31, 31, 31)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 414, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addGap(49, 49, 49)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 381, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(21, Short.MAX_VALUE))
         );
 
         jTabbedPane3.addTab("Professores", jPanel2);
@@ -317,20 +387,17 @@ public class JanelaPrincipal extends javax.swing.JFrame {
 
         tblDisciplinas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+
             },
             new String [] {
-                "ID", "Nome da Disciplina", "Carga Horária"
+                "ID", "Código", "Nome da Disciplina", "Carga Horária"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false
+                false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -343,6 +410,8 @@ public class JanelaPrincipal extends javax.swing.JFrame {
         });
         jScrollPane3.setViewportView(tblDisciplinas);
 
+        lblCodigoDisciplina.setText("Código:");
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -351,29 +420,38 @@ public class JanelaPrincipal extends javax.swing.JFrame {
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGap(287, 287, 287)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(btnCadastrarDisciplina)
-                            .addComponent(lblNomeDisciplina))
-                        .addGap(36, 36, 36)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblNomeDisciplina)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                                .addComponent(btnCadastrarDisciplina)
+                                .addGap(14, 14, 14)))
+                        .addGap(33, 33, 33)
                         .addComponent(btnExcluirDisciplina)
-                        .addGap(87, 87, 87)
+                        .addGap(56, 56, 56)
                         .addComponent(btnListarDisciplinas))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(317, 317, 317)
-                        .addComponent(lblCargaHoraria)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txtCargaHoraria, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(152, 152, 152)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 650, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addGroup(jPanel4Layout.createSequentialGroup()
                             .addContainerGap()
                             .addComponent(txtNomeDisciplina, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createSequentialGroup()
                             .addGap(375, 375, 375)
-                            .addComponent(lblTituloDisciplinas))))
-                .addContainerGap(298, Short.MAX_VALUE))
+                            .addComponent(lblTituloDisciplinas)))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(153, 153, 153)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 650, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addGap(317, 317, 317)
+                                .addComponent(lblCargaHoraria))
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addGap(332, 332, 332)
+                                .addComponent(lblCodigoDisciplina)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtCargaHoraria, javax.swing.GroupLayout.DEFAULT_SIZE, 233, Short.MAX_VALUE)
+                            .addComponent(txtCodigoDisciplina))))
+                .addContainerGap(297, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -388,14 +466,18 @@ public class JanelaPrincipal extends javax.swing.JFrame {
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblCargaHoraria)
                     .addComponent(txtCargaHoraria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(37, 37, 37)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblCodigoDisciplina)
+                    .addComponent(txtCodigoDisciplina, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnCadastrarDisciplina)
                     .addComponent(btnExcluirDisciplina)
                     .addComponent(btnListarDisciplinas))
-                .addGap(31, 31, 31)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 414, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addGap(37, 37, 37)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 399, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         jTabbedPane3.addTab("Disciplinas", jPanel4);
@@ -418,20 +500,17 @@ public class JanelaPrincipal extends javax.swing.JFrame {
 
         tblTurmas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+
             },
             new String [] {
-                "ID", "Disciplina", "Quantidade de Vagas"
+                "ID", "Disciplina", "Professor", "Quantidade de Vagas", "Código da Turma:"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false
+                false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -443,6 +522,12 @@ public class JanelaPrincipal extends javax.swing.JFrame {
             }
         });
         jScrollPane5.setViewportView(tblTurmas);
+
+        lblCodigoTurma.setText("Código da Turma:");
+
+        txtCodigoTurma.addActionListener(this::txtCodigoTurmaActionPerformed);
+
+        jLabel1.setText("Professor:");
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -457,46 +542,63 @@ public class JanelaPrincipal extends javax.swing.JFrame {
                         .addGap(264, 264, 264)
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblCodigoTurma)
+                                    .addComponent(btnCadastrarTurma))
+                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel5Layout.createSequentialGroup()
+                                        .addGap(29, 29, 29)
+                                        .addComponent(btnExcluirTurma)
+                                        .addGap(53, 53, 53)
+                                        .addComponent(btnListarTurmas))
+                                    .addGroup(jPanel5Layout.createSequentialGroup()
+                                        .addGap(18, 18, 18)
+                                        .addComponent(txtCodigoTurma, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addComponent(lblVagasTurma)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtVagasTurma, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel5Layout.createSequentialGroup()
                                 .addComponent(lblDisciplinaTurma)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(cmbDisciplinaTurma, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel5Layout.createSequentialGroup()
-                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(lblVagasTurma)
-                                    .addComponent(btnCadastrarTurma))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel5Layout.createSequentialGroup()
-                                        .addGap(10, 10, 10)
-                                        .addComponent(btnExcluirTurma)
-                                        .addGap(66, 66, 66)
-                                        .addComponent(btnListarTurmas))
-                                    .addComponent(txtVagasTurma, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cmbProfessorTurma, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addGap(215, 215, 215)
-                        .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(433, Short.MAX_VALUE))
+                        .addGap(129, 129, 129)
+                        .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 693, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(278, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGap(73, 73, 73)
                 .addComponent(lblTituloTurmas)
-                .addGap(18, 18, 18)
+                .addGap(31, 31, 31)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblDisciplinaTurma)
                     .addComponent(cmbDisciplinaTurma, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addGap(12, 12, 12)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(cmbProfessorTurma, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblVagasTurma)
                     .addComponent(txtVagasTurma, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(26, 26, 26)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblCodigoTurma)
+                    .addComponent(txtCodigoTurma, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(36, 36, 36)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnCadastrarTurma)
                     .addComponent(btnExcluirTurma)
                     .addComponent(btnListarTurmas))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 349, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -579,7 +681,7 @@ public class JanelaPrincipal extends javax.swing.JFrame {
                 .addComponent(lblResultadosSimulacao)
                 .addGap(29, 29, 29)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(114, Short.MAX_VALUE))
+                .addContainerGap(124, Short.MAX_VALUE))
         );
 
         jTabbedPane3.addTab("Matrículas", jPanel6);
@@ -600,13 +702,18 @@ public class JanelaPrincipal extends javax.swing.JFrame {
 
     private void btnCadastrarAlunoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarAlunoActionPerformed
         
+
 String nome = txtNome.getText().trim();
 String cpf = txtCpf.getText().trim();
+String matricula = txtMatriculaAcademicaAluno.getText().trim();
+String curso = txtCursoAluno.getText().trim();
 
-if (nome.isEmpty() || cpf.isEmpty()) {
+if (nome.isEmpty() || cpf.isEmpty()
+        || matricula.isEmpty() || curso.isEmpty()) {
+
     javax.swing.JOptionPane.showMessageDialog(
         this,
-        "Preencha o nome e o CPF do aluno!",
+        "Preencha todos os campos do aluno!",
         "Campos obrigatórios",
         javax.swing.JOptionPane.WARNING_MESSAGE
     );
@@ -615,10 +722,11 @@ if (nome.isEmpty() || cpf.isEmpty()) {
 
 javax.swing.JOptionPane.showMessageDialog(
     this,
-    "Dados preenchidos! Cadastro aguardando integração com o serviço.",
+    "Dados preenchidos! Cadastro aguardando integração.",
     "Integração pendente",
     javax.swing.JOptionPane.INFORMATION_MESSAGE
 );
+
 
     }//GEN-LAST:event_btnCadastrarAlunoActionPerformed
 
@@ -628,13 +736,15 @@ javax.swing.JOptionPane.showMessageDialog(
 
     private void btnCadastrarProfessorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarProfessorActionPerformed
         
+
 String nome = txtNomeProfessor.getText().trim();
 String cpf = txtCpfProfessor.getText().trim();
+String siape = txtSiapeProfessor.getText().trim();
 
-if (nome.isEmpty() || cpf.isEmpty()) {
+if (nome.isEmpty() || cpf.isEmpty() || siape.isEmpty()) {
     javax.swing.JOptionPane.showMessageDialog(
         this,
-        "Preencha o nome e o CPF do professor!",
+        "Preencha todos os campos do professor!",
         "Campos obrigatórios",
         javax.swing.JOptionPane.WARNING_MESSAGE
     );
@@ -668,13 +778,15 @@ javax.swing.JOptionPane.showMessageDialog(
 
     private void btnCadastrarDisciplinaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarDisciplinaActionPerformed
         
+
+String codigo = txtCodigoDisciplina.getText().trim();
 String nome = txtNomeDisciplina.getText().trim();
 String carga = txtCargaHoraria.getText().trim();
 
-if (nome.isEmpty() || carga.isEmpty()) {
+if (codigo.isEmpty() || nome.isEmpty() || carga.isEmpty()) {
     javax.swing.JOptionPane.showMessageDialog(
         this,
-        "Preencha o nome e a carga horária da disciplina!",
+        "Preencha todos os campos da disciplina!",
         "Campos obrigatórios",
         javax.swing.JOptionPane.WARNING_MESSAGE
     );
@@ -742,13 +854,15 @@ javax.swing.JOptionPane.showMessageDialog(
 
     private void btnCadastrarTurmaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarTurmaActionPerformed
         
+
+String codigo = txtCodigoTurma.getText().trim();
 String vagasTexto = txtVagasTurma.getText().trim();
 
-if (vagasTexto.isEmpty()) {
+if (codigo.isEmpty() || vagasTexto.isEmpty()) {
     javax.swing.JOptionPane.showMessageDialog(
         this,
-        "Informe a quantidade de vagas!",
-        "Campo obrigatório",
+        "Preencha o código e a quantidade de vagas!",
+        "Campos obrigatórios",
         javax.swing.JOptionPane.WARNING_MESSAGE
     );
     return;
@@ -767,11 +881,21 @@ try {
         return;
     }
 
-    if (cmbDisciplinaTurma.getSelectedItem() == null) {
+    if (cmbDisciplinaTurma.getSelectedIndex() == -1) {
         javax.swing.JOptionPane.showMessageDialog(
             this,
-            "Selecione uma disciplina cadastrada!",
+            "Selecione uma disciplina!",
             "Disciplina obrigatória",
+            javax.swing.JOptionPane.WARNING_MESSAGE
+        );
+        return;
+    }
+
+    if (cmbProfessorTurma.getSelectedIndex() == -1) {
+        javax.swing.JOptionPane.showMessageDialog(
+            this,
+            "Selecione um professor!",
+            "Professor obrigatório",
             javax.swing.JOptionPane.WARNING_MESSAGE
         );
         return;
@@ -779,7 +903,7 @@ try {
 
     javax.swing.JOptionPane.showMessageDialog(
         this,
-        "Dados preenchidos! Cadastro de turma aguardando integração.",
+        "Dados válidos! Cadastro de turma aguardando integração.",
         "Integração pendente",
         javax.swing.JOptionPane.INFORMATION_MESSAGE
     );
@@ -792,6 +916,7 @@ try {
         javax.swing.JOptionPane.WARNING_MESSAGE
     );
 }
+
 
     }//GEN-LAST:event_btnCadastrarTurmaActionPerformed
 
@@ -968,6 +1093,18 @@ txtResultadosSimulacao.setText(
 
     }//GEN-LAST:event_btnSimularMatriculasActionPerformed
 
+    private void txtCursoAlunoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCursoAlunoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCursoAlunoActionPerformed
+
+    private void txtSiapeProfessorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSiapeProfessorActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtSiapeProfessorActionPerformed
+
+    private void txtCodigoTurmaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCodigoTurmaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCodigoTurmaActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1011,7 +1148,9 @@ txtResultadosSimulacao.setText(
     private javax.swing.JButton btnSimularMatriculas;
     private javax.swing.JComboBox<String> cmbAlunoMatricula;
     private javax.swing.JComboBox<String> cmbDisciplinaTurma;
+    private javax.swing.JComboBox<String> cmbProfessorTurma;
     private javax.swing.JComboBox<String> cmbTurmaMatricula;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel4;
@@ -1025,13 +1164,18 @@ txtResultadosSimulacao.setText(
     private javax.swing.JTabbedPane jTabbedPane3;
     private javax.swing.JLabel lblAlunoMatricula;
     private javax.swing.JLabel lblCargaHoraria;
+    private javax.swing.JLabel lblCodigoDisciplina;
+    private javax.swing.JLabel lblCodigoTurma;
     private javax.swing.JLabel lblCpf;
     private javax.swing.JLabel lblCpfProfessor;
+    private javax.swing.JLabel lblCursoAluno;
     private javax.swing.JLabel lblDisciplinaTurma;
+    private javax.swing.JLabel lblMatriculaAcademicaAluno;
     private javax.swing.JLabel lblNome;
     private javax.swing.JLabel lblNomeDisciplina;
     private javax.swing.JLabel lblNomeProfessor;
     private javax.swing.JLabel lblResultadosSimulacao;
+    private javax.swing.JLabel lblSiapeProfessor;
     private javax.swing.JLabel lblTituloAlunos;
     private javax.swing.JLabel lblTituloDisciplinas;
     private javax.swing.JLabel lblTituloMatriculas;
@@ -1044,12 +1188,17 @@ txtResultadosSimulacao.setText(
     private javax.swing.JTable tblProfessores;
     private javax.swing.JTable tblTurmas;
     private javax.swing.JTextField txtCargaHoraria;
+    private javax.swing.JTextField txtCodigoDisciplina;
+    private javax.swing.JTextField txtCodigoTurma;
     private javax.swing.JTextField txtCpf;
     private javax.swing.JTextField txtCpfProfessor;
+    private javax.swing.JTextField txtCursoAluno;
+    private javax.swing.JTextField txtMatriculaAcademicaAluno;
     private javax.swing.JTextField txtNome;
     private javax.swing.JTextField txtNomeDisciplina;
     private javax.swing.JTextField txtNomeProfessor;
     private javax.swing.JTextArea txtResultadosSimulacao;
+    private javax.swing.JTextField txtSiapeProfessor;
     private javax.swing.JTextField txtVagasTurma;
     // End of variables declaration//GEN-END:variables
 }
